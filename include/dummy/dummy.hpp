@@ -9,13 +9,12 @@
 #ifndef DUMMY_HPP_
 #define DUMMY_HPP_
 
-#include <fmt/format.h>
+#include <string>
 
 namespace dummy {
 
-static void print_hello() {
-  fmt::println("Hello");
-}
+std::string get_hello_string();
+void print_hello();
 
 }  // namespace dummy
 

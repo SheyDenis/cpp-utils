@@ -13,21 +13,35 @@ INCLUDE(cmake-utils)
 FIND_PACKAGE(fmt REQUIRED)
 FIND_PACKAGE(spdlog REQUIRED)
 
-ADD_EXECUTABLE(dummy
-               src/dummy/main.cpp
+# Start dummy-lib
+ADD_LIBRARY(dummy-lib STATIC
+            src/dummy/dummy.cpp
 )
-SET_CMAKE_TARGET_PROPERTIES(dummy)
+SET_CMAKE_TARGET_PROPERTIES(dummy-lib)
 
-TARGET_INCLUDE_DIRECTORIES(dummy
+TARGET_INCLUDE_DIRECTORIES(dummy-lib
                            PUBLIC
                            ${PROJECT_SOURCE_DIR}/include
 )
 
-TARGET_LINK_LIBRARIES(dummy
+TARGET_LINK_LIBRARIES(dummy-lib
                       fmt::fmt
 )
 
-TARGET_COMPILE_OPTIONS(dummy
+TARGET_COMPILE_OPTIONS(dummy-lib
                        PRIVATE
                        ${DEFAULT_COMPILER_WARNING_FLAGS}
 )
+
+ADD_EXECUTABLE(dummy
+               src/dummy/main.cpp
+)
+TARGET_LINK_LIBRARIES(dummy
+                      dummy-lib
+)
+# End dummy-lib
+
+IF (NOT DISABLE_TESTS)
+    ENABLE_TESTING()
+    ADD_SUBDIRECTORY(tests)
+ENDIF ()
