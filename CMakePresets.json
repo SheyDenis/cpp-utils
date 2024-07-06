@@ -19,5 +19,11 @@
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/generators/conan_toolchain.cmake"
       }
     }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug",
+      "configurePreset": "debug"
+    }
   ]
 }
