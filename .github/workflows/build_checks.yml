@@ -30,10 +30,10 @@ jobs:
           conan profile new default --detect
           conan profile update settings.build_type=Debug default
       - name: Install Dependencies
-        run: conan install . --build=missing
+        run: poetry run conan install . --build=missing
       - name: Build
-        run: cmake --build --target dummy --preset debug
+        run: cmake --preset debug
       - name: Run unittests
-        run: 'false'
+        run: ctest --test-dir cmake-build-debug/
       - name: Check Tag Is New
         run: '[[ -z $(git tag -l | grep -E ^$(python tools/get_project_version.py)$) ]]'
