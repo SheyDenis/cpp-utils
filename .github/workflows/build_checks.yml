@@ -24,18 +24,16 @@ jobs:
           python-version: '3.11'
       - name: Install poetry
         run: pipx install poetry
-      - name: Enable virtualenv
-        run: poetry shell
       - name: Prepare Environment
         run: |
           poetry install
-          conan profile new default --detect
-          conan profile update settings.build_type=Debug default
+          poetry run conan profile new default --detect
+          poetry run conan profile update settings.build_type=Debug default
       - name: Install Dependencies
-        run: conan install . --build=missing
+        run: poetry run conan install . --build=missing
       - name: Build
         run: cmake --preset debug
       - name: Run unittests
-        run: ctest --test-dir cmake-build-debug/
+        run: ctest --preset debug
       - name: Check Tag Is New
-        run: '[[ -z $(git tag -l | grep -E ^$(python tools/get_project_version.py)$) ]]'
+        run: '[[ -z $(git tag -l | grep -E ^$(poetry run python scripts/get_project_version.py)$) ]]'
