@@ -1,0 +1,39 @@
+name: BuildChecks
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - synchronize
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5.0.0
+        with:
+          python-version: '3.11'
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Prepare Environment
+        run: |
+          poetry install
+          poetry run conan profile new default --detect
+          poetry run conan profile update settings.build_type=Debug default
+      - name: Install Dependencies
+        run: poetry run conan install . --build=missing
+      - name: Build
+        run: cmake --preset debug
+      - name: Run unittests
+        run: ctest --preset debug
+      - name: Check Tag Is New
+        run: '[[ -z $(git tag -l | grep -E ^$(poetry run python scripts/get_project_version.py)$) ]]'
