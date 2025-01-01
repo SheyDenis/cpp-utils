@@ -27,12 +27,14 @@ jobs:
       - name: Prepare Environment
         run: |
           poetry install
-          poetry run conan profile new default --detect
-          poetry run conan profile update settings.build_type=Debug default
+          poetry run conan profile detect
+          sed -i 's/build_type=.*/build_type=Debug/' build/profiles/default
       - name: Install Dependencies
         run: poetry run conan install . --build=missing
       - name: Build
-        run: cmake --preset debug
+        run: |
+          cmake --preset debug
+          cmake --build --preset debug --target all
       - name: Run unittests
         run: ctest --preset debug
       - name: Check Tag Is New

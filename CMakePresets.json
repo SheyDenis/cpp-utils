@@ -9,7 +9,7 @@
       "cacheVariables": {
         "IS_DEV": {
           "type": "BOOL",
-          "value": "ON"
+          "value": "OFF"
         },
         "CMAKE_EXPORT_COMPILE_COMMANDS": {
           "type": "BOOL",
