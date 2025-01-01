@@ -28,11 +28,14 @@ jobs:
         run: |
           poetry install
           poetry run conan profile detect
+          sed -i 's/build_type=.*/build_type=Debug/' build/profiles/default
       - name: Install Dependencies
         run: poetry run conan install . --build=missing
       - name: Build
-        run: cmake --preset release
+        run: |
+          cmake --preset debug
+          cmake --build cmake-build-debug --target all
       - name: Run unittests
-        run: ctest --preset release
+        run: ctest --preset debug
       - name: Check Tag Is New
         run: '[[ -z $(git tag -l | grep -E ^$(poetry run python scripts/get_project_version.py)$) ]]'
