@@ -27,7 +27,7 @@ jobs:
       - name: Prepare Environment
         run: |
           poetry install
-          poetry run conan profile new default --detect
+          poetry run conan profile detect
           poetry run conan profile update settings.build_type=Debug default
       - name: Install Dependencies
         run: poetry run conan install . --build=missing
