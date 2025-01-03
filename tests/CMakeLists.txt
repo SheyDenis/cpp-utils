@@ -28,5 +28,6 @@ MACRO(ADD_TEST_EXECUTABLE __target)
 ENDMACRO()
 
 ADD_TEST_EXECUTABLE(enum-utils-tests
+                    enum-utils/test-enum-map.cpp
                     enum-utils/test-enum-utils.cpp
 )
