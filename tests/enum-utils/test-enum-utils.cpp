@@ -119,8 +119,6 @@ struct fmt::formatter<DummyEnum> : fmt::formatter<std::string> {
 };
 
 TEST_CASE("Test with libfmt formatter") {
-  using TestValue = std::pair<DummyEnum, std::string>;
   auto enum_val = GENERATE(DummyEnumGenerator<DummyEnum, char const*>(dummy_enum_values));
-  std::string result = fmt::format(FMT_STRING("{:s}"), enum_val.enum_value());
-  REQUIRE(result == enum_val.string_value());
+  REQUIRE(fmt::format(FMT_STRING("{:s}"), enum_val.enum_value()) == enum_val.string_value());
 }
