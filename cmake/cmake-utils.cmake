@@ -1,40 +1,12 @@
-SET(DEFAULT_COMPILER_WARNING_FLAGS
-    -Werror=all
-    -Werror=cast-align=strict
-    -Werror=conversion
-    -Werror=duplicated-branches
-    -Werror=duplicated-cond
-    -Werror=effc++
-    -Werror=extra
-    -Werror=float-equal
-    -Werror=format-security
-    -Werror=format=2
-    -Werror=logical-op
-    -Werror=missing-include-dirs
-    -Werror=narrowing
-    -Werror=non-virtual-dtor
-    -Werror=nonnull
-    -Werror=null-dereference
-    -Werror=old-style-cast
-    -Werror=overloaded-virtual
-    -Werror=pedantic
-    -Werror=reorder
-    -Werror=shadow
-    -Werror=sign-conversion
-    -Werror=unused
-    -Werror=unused-const-variable
-    -Werror=unused-function
-    -Werror=unused-local-typedefs
-    -Werror=unused-parameter
-    -Werror=unused-result
-    -Werror=unused-variable
-    -Werror=useless-cast
-    -Werror=write-strings
-
-    $<$<BOOL:${IS_DEV}>:-Wno-unused-const-variable>
-    $<$<BOOL:${IS_DEV}>:-Wno-unused-parameter>
-    $<$<BOOL:${IS_DEV}>:-Wno-unused>
-)
-MACRO(SET_CMAKE_TARGET_PROPERTIES __target)
-    SET_TARGET_PROPERTIES(${__target} PROPERTIES CXX_STANDARD 17 POSITION_INDEPENDENT_CODE ON)
+MACRO(SET_CMAKE_TARGET_PROPERTIES)
+    CMAKE_PARSE_ARGUMENTS(TARGET_PROPERTIES
+                          ""
+                          "TARGET"
+                          ""
+                          ${ARGN}
+    )
+    IF (NOT DEFINED TARGET_PROPERTIES_TARGET)
+        MESSAGE(FATAL_ERROR "SET_CMAKE_TARGET_PROPERTIES: No target provided.")
+    ENDIF ()
+    SET_TARGET_PROPERTIES(${TARGET_PROPERTIES_TARGET} PROPERTIES CXX_STANDARD 17 POSITION_INDEPENDENT_CODE ON)
 ENDMACRO()

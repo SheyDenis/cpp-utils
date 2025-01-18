@@ -3,27 +3,24 @@ FIND_PACKAGE(trompeloeil REQUIRED)
 
 INCLUDE(Catch)
 
-MACRO(ADD_TEST_EXECUTABLE __target)
+MACRO(ADD_TEST_EXECUTABLE TARGET)
     IF (${ARGC} LESS 2)
-        MESSAGE(FATAL_ERROR "ADD_TEST_EXECUTABLE: No sources provided for test executable ${__target}")
+        MESSAGE(FATAL_ERROR "ADD_TEST_EXECUTABLE: No sources provided for test executable ${TARGET}")
     ENDIF ()
 
     SET(SOURCES ${ARGV})
     LIST(POP_FRONT SOURCES)
-    ADD_EXECUTABLE(${__target}
+    ADD_EXECUTABLE(${TARGET}
                    tests-main.cpp
                    ${SOURCES}
     )
 
-    TARGET_INCLUDE_DIRECTORIES(${__target}
-                               PRIVATE
-                               ${PROJECT_SOURCE_DIR}/include)
-    TARGET_LINK_LIBRARIES(${__target}
+    TARGET_LINK_LIBRARIES(${TARGET}
                           Catch2::Catch2
-                          fmt
+                          fmt::fmt
                           trompeloeil::trompeloeil
     )
-    CATCH_DISCOVER_TESTS(${__target})
+    CATCH_DISCOVER_TESTS(${TARGET})
 
 ENDMACRO()
 
@@ -31,3 +28,6 @@ ADD_TEST_EXECUTABLE(enum-utils-tests
                     enum-utils/test-enum-map.cpp
                     enum-utils/test-enum-utils.cpp
 )
+TARGET_LINK_LIBRARIES(enum-utils-tests cpp-utils::enum-utils)
+SET_CMAKE_TARGET_PROPERTIES(TARGET enum-utils-tests)
+SET_COMPILER_WARNING_FLAGS(TARGET enum-utils-tests)

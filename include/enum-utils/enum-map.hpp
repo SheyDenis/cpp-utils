@@ -45,7 +45,7 @@ struct EnumMap {
   Container values_;
 
  private:
-  EnumMap() {
+  EnumMap() : values_({}) {
     // FIXME - Missing checks against duplicate values in E::values.
     for (auto const& [key, value] : E::values) {
       values_.insert({key, value});

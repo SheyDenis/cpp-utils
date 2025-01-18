@@ -1,5 +1,5 @@
 /**
- * @file tests_main.cpp
+ * @file tests-main.cpp
  * @author denis.sheyer@gmail.com
  * @brief
  * @date 12024-07-06

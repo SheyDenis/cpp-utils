@@ -1,6 +1,7 @@
 import logging
 
 from conan import ConanFile
+from conan.tools.cmake import CMakeToolchain, cmake_layout
 
 # pylint: disable=missing-class-docstring,missing-function-docstring,not-callable
 
@@ -14,7 +15,7 @@ logger = _setup_logger()
 
 
 class CppUtilsConanFile(ConanFile):
-    generators = 'CMakeToolchain', 'CMakeDeps'
+    generators = 'CMakeDeps'
     settings = 'os', 'compiler', 'build_type', 'arch'
 
     def configure(self):
@@ -26,11 +27,12 @@ class CppUtilsConanFile(ConanFile):
     def requirements(self):
         self.requires('catch2/3.5.0')
         self.requires('fmt/10.2.1')
-        self.requires('spdlog/1.12.0')
         self.requires('trompeloeil/46')
 
     def layout(self):
-        self.folders.source = 'src'
-        self.folders.build = 'build'
-        self.folders.install = 'install'
-        self.folders.generators = 'build/generators'
+        cmake_layout(self, src_folder='src')
+
+    def generate(self):
+        tc = CMakeToolchain(self)
+        tc.user_presets_path = False
+        tc.generate()
