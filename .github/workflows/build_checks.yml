@@ -8,9 +8,6 @@ on:
       - opened
       - synchronize
 
-env:
-  CONAN_HOME: ${{ env.GITHUB_WORKSPACE }}/build
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -30,6 +27,7 @@ jobs:
       - name: Prepare Environment
         run: |
           poetry install
+          export CONAN_HOME=${{ env.GITHUB_WORKSPACE }}/build
           poetry run conan profile detect
       - name: Install Dependencies
         run: poetry run conan install . --build=missing -s build_type=Debug
