@@ -33,6 +33,9 @@ IF (GENERATE_DOCS)
     # TODO - Allow disabling via conanfile.py.
     FIND_PACKAGE(Doxygen REQUIRED COMPONENTS dot doxygen)
     SET(DOCS_DIR ${CMAKE_SOURCE_DIR}/docs)
+    IF (NOT EXISTS ${DOCS_DIR})
+        FILE(MAKE_DIRECTORY ${DOCS_DIR})
+    ENDIF (NOT EXISTS ${DOCS_DIR})
 
     SET(DOXYGEN_GENERATE_HTML YES)
     SET(DOXYGEN_GENERATE_LATEX NO)
@@ -50,7 +53,7 @@ IF (GENERATE_DOCS)
                       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                       COMMENT "Generating dependencies graph with Doxygen"
     )
-    ADD_CUSTOM_TARGET(generate-docs ALL
+    ADD_CUSTOM_TARGET(generate-docs
                       DEPENDS doxygen-docs graph-dependencies
     )
 ENDIF (GENERATE_DOCS)
