@@ -8,6 +8,9 @@ on:
       - opened
       - synchronize
 
+env:
+  CONAN_HOME: ${{ runner.workspace }}/build
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -28,9 +31,8 @@ jobs:
         run: |
           poetry install
           poetry run conan profile detect
-          sed -i 's/build_type=.*/build_type=Debug/' build/profiles/default
       - name: Install Dependencies
-        run: poetry run conan install . --build=missing
+        run: poetry run conan install . --build=missing -s build_type=Debug
       - name: Build
         run: |
           cmake --preset debug
