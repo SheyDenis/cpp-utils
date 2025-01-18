@@ -29,3 +29,5 @@ ADD_TEST_EXECUTABLE(enum-utils-tests
                     enum-utils/test-enum-utils.cpp
 )
 TARGET_LINK_LIBRARIES(enum-utils-tests cpp-utils::enum-utils)
+SET_CMAKE_TARGET_PROPERTIES(TARGET enum-utils-tests)
+SET_COMPILER_WARNING_FLAGS(TARGET enum-utils-tests)

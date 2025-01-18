@@ -4,12 +4,18 @@
 #   TARGET - The target to which the compiler warning flags will be applied.
 #
 # Usage:
-#   SET_COMPILER_WARNING_FLAGS(<target>)
-#
-# Example:
-#   SET_COMPILER_WARNING_FLAGS(my_target)
-FUNCTION(SET_COMPILER_WARNING_FLAGS TARGET)
-    TARGET_COMPILE_OPTIONS(${TARGET} PRIVATE
+#   SET_COMPILER_WARNING_FLAGS(TARGET <target>)
+FUNCTION(SET_COMPILER_WARNING_FLAGS)
+    CMAKE_PARSE_ARGUMENTS(COMPILER_WARNING
+                          ""
+                          "TARGET"
+                          ""
+                          ${ARGN}
+    )
+    IF (NOT DEFINED COMPILER_WARNING_TARGET)
+        MESSAGE(FATAL_ERROR "SET_COMPILER_WARNING_FLAGS: No target provided.")
+    ENDIF (NOT DEFINED COMPILER_WARNING_TARGET)
+    TARGET_COMPILE_OPTIONS(${COMPILER_WARNING_TARGET} PRIVATE
                            -Werror=all
                            -Werror=cast-align=strict
                            -Werror=conversion
@@ -54,10 +60,16 @@ ENDFUNCTION(SET_COMPILER_WARNING_FLAGS)
 #   TARGET - The target to which the sanitizer flags will be applied.
 #
 # Usage:
-#   SET_SANITIZER_FLAGS(<target>)
-#
-# Example:
-#   SET_SANITIZER_FLAGS(my_target)
-FUNCTION(SET_SANITIZER_FLAGS TARGET)
+#   SET_SANITIZER_FLAGS(TARGET <target>)
+FUNCTION(SET_SANITIZER_FLAGS)
+    CMAKE_PARSE_ARGUMENTS(SANITIZER_FLAGS
+                          ""
+                          "TARGET"
+                          ""
+                          ${ARGN}
+    )
+    IF (NOT DEFINED SANITIZER_FLAGS_TARGET)
+        MESSAGE(FATAL_ERROR "SET_SANITIZER_FLAGS: No target provided.")
+    ENDIF (NOT DEFINED SANITIZER_FLAGS_TARGET)
     MESSAGE(WARNING "SET_SANITIZER_FLAGS is not implemented yet.")
 ENDFUNCTION(SET_SANITIZER_FLAGS)
