@@ -18,18 +18,40 @@
         "CMAKE_BUILD_TYPE": "Debug",
         "CONAN_TOOLCHAIN_PATH": "${sourceDir}/build/Debug/generators/conan_toolchain.cmake"
       }
+    },
+    {
+      "name": "debug-gh-workflows",
+      "description": "Debug configuration for GitHub Workflows",
+      "inherits": [
+        "debug"
+      ],
+      "cacheVariables": {
+        "IS_DEV": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "GENERATE_DOCS": "OFF"
+      }
     }
   ],
   "buildPresets": [
     {
       "name": "debug",
       "configurePreset": "debug"
+    },
+    {
+      "name": "debug-gh-workflows",
+      "configurePreset": "debug-gh-workflows"
     }
   ],
   "testPresets": [
     {
       "name": "debug",
       "configurePreset": "debug"
+    },
+    {
+      "name": "debug-gh-workflows",
+      "configurePreset": "debug-gh-workflows"
     }
   ]
 }

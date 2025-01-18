@@ -35,9 +35,9 @@ jobs:
         run: poetry run conan install . --build=missing -s build_type=Debug
       - name: Build
         run: |
-          cmake --preset debug
-          cmake --build --preset debug --target all
+          cmake --preset debug-gh-workflows
+          cmake --build --preset debug-gh-workflows --target all
       - name: Run unittests
-        run: ctest --preset debug
+        run: ctest --preset debug-gh-workflows
       - name: Check Tag Is New
         run: '[[ -z $(git tag -l | grep -E ^$(poetry run python scripts/get_project_version.py)$) ]]'
