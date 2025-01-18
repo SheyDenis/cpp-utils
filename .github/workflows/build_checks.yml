@@ -9,7 +9,7 @@ on:
       - synchronize
 
 env:
-  CONAN_HOME: ${{ runner.workspace }}/build
+  CONAN_HOME: ${{ env.GITHUB_WORKSPACE }}/build
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
