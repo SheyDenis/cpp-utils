@@ -1,0 +1,13 @@
+---
+Checks: 'modernize-*,-modernize-use-trailing-return-type,clang-analyzer-*,bugprone-*,readability-*,cppcoreguidelines-*,-readability-avoid-const-params-in-decls,-cppcoreguidelines-avoid-non-const-global-variables,-altera-*'
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+CheckOptions:
+  - key: readability-function-cognitive-complexity.Threshold
+    value: 25
+  - key: readability-identifier-length.MinLength
+    value: 3
+  - key: readability-identifier-length.IgnoredVariableNames
+    value: '^(ex?|[ijkv])$'
+  - key: readability-identifier-length.IgnoredParameterNames
+    value: '^[kv]$'
