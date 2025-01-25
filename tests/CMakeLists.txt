@@ -7,7 +7,7 @@ MACRO(ADD_TEST_EXECUTABLE)
     CMAKE_PARSE_ARGUMENTS(TEST_EXECUTABLE
                           ""
                           "NAME"
-                          "SOURCES"
+                          "SOURCES;LINK_LIBRARIES"
                           ${ARGN}
     )
     IF (NOT DEFINED TEST_EXECUTABLE_NAME)
@@ -23,14 +23,18 @@ MACRO(ADD_TEST_EXECUTABLE)
                           PRIVATE
                           Catch2::Catch2
                           fmt::fmt
-                          trompeloeil::trompeloeil)
+                          trompeloeil::trompeloeil
+                          ${TEST_EXECUTABLE_LINK_LIBRARIES}
+    )
     CATCH_DISCOVER_TESTS(${TEST_EXECUTABLE_NAME})
 ENDMACRO()
 
 ADD_TEST_EXECUTABLE(NAME enum-utils-tests
                     SOURCES
                     enum-utils/test-enum-map.cpp
-                    enum-utils/test-enum-utils.cpp)
-TARGET_LINK_LIBRARIES(enum-utils-tests cpp-utils::enum-utils)
+                    enum-utils/test-enum-utils.cpp
+                    LINK_LIBRARIES
+                    cpp-utils::enum-utils
+)
 SET_CMAKE_TARGET_PROPERTIES(TARGET enum-utils-tests)
 SET_COMPILER_WARNING_FLAGS(TARGET enum-utils-tests)
