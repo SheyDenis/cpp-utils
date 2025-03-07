@@ -28,6 +28,7 @@ struct DummyEnumEnumMap {
   using key_type = DummyEnum;
   using value_type = std::pair<DummyEnum, char const*>;
   static key_type constexpr sentinel = key_type::SENTINEL;
+  static bool constexpr exception_on_duplicates = false;
 
   static std::array constexpr values = {
       value_type{key_type::FIRST, "FIRST"},
@@ -43,6 +44,7 @@ struct DummyEnumStringViewEnumMap {
   using key_type = DummyEnum;
   using value_type = std::pair<DummyEnum, std::string_view>;
   static key_type constexpr sentinel = key_type::SENTINEL;
+  static bool constexpr exception_on_duplicates = false;
 
   static std::array constexpr values = {
       value_type{key_type::FIRST, "FIRST"},
@@ -58,6 +60,23 @@ struct DummyEnumWithDuplicatesEnumMap {
   using key_type = DummyEnum;
   using value_type = std::pair<DummyEnum, char const*>;
   static key_type constexpr sentinel = key_type::SENTINEL;
+  static bool constexpr exception_on_duplicates = false;
+
+  static std::array constexpr values = {
+      value_type{key_type::FIRST, "FIRST"},
+      value_type{key_type::SECOND, "SECOND"},
+      value_type{key_type::SECOND, "SECOND"},
+      value_type{key_type::THIRD, "THIRD"},
+  };  // Omit template arguments to std::array so that they are deduced automatically.
+  static std::size_t constexpr count = values.size();
+  static_assert(count == 4, "Invalid number of elements in values array");
+};
+
+struct ExceptionOnDuplicatesEnumMap {
+  using key_type = DummyEnum;
+  using value_type = std::pair<DummyEnum, char const*>;
+  static key_type constexpr sentinel = key_type::SENTINEL;
+  static bool constexpr exception_on_duplicates = true;
 
   static std::array constexpr values = {
       value_type{key_type::FIRST, "FIRST"},
@@ -130,4 +149,8 @@ TEST_CASE("Test EnumMap duplicates") {
   REQUIRE_FALSE(enum_utils::EnumMap<DummyEnumEnumMap>::has_duplicates());
   REQUIRE_FALSE(enum_utils::EnumMap<DummyEnumStringViewEnumMap>::has_duplicates());
   REQUIRE(enum_utils::EnumMap<DummyEnumWithDuplicatesEnumMap>::has_duplicates());
+}
+
+TEST_CASE("Test EnumMap duplicates exceptions") {
+  REQUIRE_THROWS(enum_utils::EnumMap<ExceptionOnDuplicatesEnumMap>::has_duplicates());
 }
