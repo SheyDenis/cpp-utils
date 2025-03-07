@@ -43,12 +43,13 @@ struct EnumMap {
  private:
   using Container = std::unordered_map<key_type, std::string>;
   Container values_;
+  bool found_duplicates_;
 
  private:
-  EnumMap() : values_({}) {
+  EnumMap() : values_({}), found_duplicates_(false) {
     // FIXME - Missing checks against duplicate values in E::values.
     for (auto const& [key, value] : E::values) {
-      values_.insert({key, value});
+      found_duplicates_ = !values_.insert(std::make_pair(key, value)).second || found_duplicates_;
     }
   }
   inline static EnumMap const& instance() {
@@ -68,8 +69,11 @@ struct EnumMap {
   [[nodiscard]] inline static bool contains(key_type const& key) noexcept {
     return instance().values_.contains(key);
   }
-  [[nodiscard]] static auto constexpr size() noexcept {
+  [[nodiscard]] inline static auto constexpr size() noexcept {
     return E::count;
+  }
+  [[nodiscard]] inline static bool has_duplicates() noexcept {
+    return instance().found_duplicates_;
   }
 };
 
