@@ -5,6 +5,7 @@ out/
 
 # Misc
 CMakeUserPresets.json
+/docs/
 
 # Python
 __pycache__/

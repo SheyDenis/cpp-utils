@@ -1,5 +1,17 @@
 ---
-Checks: 'modernize-*,-modernize-use-trailing-return-type,clang-analyzer-*,bugprone-*,readability-*,cppcoreguidelines-*,-readability-avoid-const-params-in-decls,-cppcoreguidelines-avoid-non-const-global-variables,-altera-*'
+Checks: '
+-altera-*,
+bugprone-*,
+clang-analyzer-*,
+cppcoreguidelines-*,
+modernize-*,
+-modernize-use-trailing-return-type,
+readability-*,
+-readability-avoid-const-params-in-decls,
+-readability-redundant-access-specifiers,
+-readability-redundant-inline-specifier,
+-cppcoreguidelines-avoid-non-const-global-variables,
+'
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
 CheckOptions:
