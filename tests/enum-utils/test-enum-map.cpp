@@ -54,6 +54,21 @@ struct DummyEnumStringViewEnumMap {
   static_assert(count == 4, "Invalid number of elements in values array");
 };
 
+struct DummyEnumWithDuplicatesEnumMap {
+  using key_type = DummyEnum;
+  using value_type = std::pair<DummyEnum, char const*>;
+  static key_type constexpr sentinel = key_type::SENTINEL;
+
+  static std::array constexpr values = {
+      value_type{key_type::FIRST, "FIRST"},
+      value_type{key_type::SECOND, "SECOND"},
+      value_type{key_type::SECOND, "SECOND"},
+      value_type{key_type::THIRD, "THIRD"},
+  };  // Omit template arguments to std::array so that they are deduced automatically.
+  static std::size_t constexpr count = values.size();
+  static_assert(count == 4, "Invalid number of elements in values array");
+};
+
 template <typename T>
 std::string const& dummy_enum_to_value_type(DummyEnum const val) {
   return enum_utils::EnumMap<T>::at(val);
@@ -109,4 +124,10 @@ TEST_CASE("Test DummyEnumEnumMap with libfmt formatter") {
   for (auto const& [enum_val, str_val] : test_data) {
     REQUIRE_THAT(fmt::format(FMT_STRING("{:s}"), enum_val), Catch::Matchers::Equals(str_val));
   }
+}
+
+TEST_CASE("Test EnumMap duplicates") {
+  REQUIRE_FALSE(enum_utils::EnumMap<DummyEnumEnumMap>::has_duplicates());
+  REQUIRE_FALSE(enum_utils::EnumMap<DummyEnumStringViewEnumMap>::has_duplicates());
+  REQUIRE(enum_utils::EnumMap<DummyEnumWithDuplicatesEnumMap>::has_duplicates());
 }
