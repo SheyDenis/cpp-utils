@@ -9,6 +9,7 @@
 #ifndef ENUM_MAP_HPP_
 #define ENUM_MAP_HPP_
 
+#include <functional>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -25,6 +26,8 @@ namespace enum_utils {
 /// - `values` is an array of pairs of the enum and the value.
 /// - `count` is the number of elements in `values`.
 /// - `exception_on_duplicates` is a boolean that determines if an exception is thrown during runtime when duplicates are found in `values`.
+/// - `on_duplicates` is a function that is called (once) during runtime when duplicates are found in `values`.
+///   This can be used trigger any logic that is needed when duplicates are found.
 template <typename E>
 struct EnumMap {
  public:
@@ -58,6 +61,9 @@ struct EnumMap {
     if (found_duplicates_ && E::exception_on_duplicates) {
       throw std::runtime_error("EnumMap: found duplicates in values array");
     }
+    if (found_duplicates_ && E::on_duplicates != nullptr) {
+      E::on_duplicates();
+    }
   }
   inline static EnumMap const& instance() noexcept(is_noexcept) {
     static EnumMap<E> inst;
@@ -83,6 +89,13 @@ struct EnumMap {
     return instance().found_duplicates_;
   }
 };
+
+/// @brief EnumMapBase is a struct that provides default values for the members of EnumMap.
+struct EnumMapBase {
+  static bool constexpr exception_on_duplicates = false;
+  static std::function<void()> on_duplicates;
+};
+std::function<void()> EnumMapBase::on_duplicates = nullptr;
 
 }  // namespace enum_utils
 

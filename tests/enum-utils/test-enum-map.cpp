@@ -11,6 +11,7 @@
 #include <array>
 #include <catch2/catch_all.hpp>
 #include <cstdint>
+#include <functional>
 #include <string>
 #include <string_view>
 
@@ -24,11 +25,10 @@ enum class DummyEnum : std::uint8_t {
   SENTINEL,
 };
 
-struct DummyEnumEnumMap {
+struct DummyEnumEnumMap : public enum_utils::EnumMapBase {
   using key_type = DummyEnum;
   using value_type = std::pair<DummyEnum, char const*>;
   static key_type constexpr sentinel = key_type::SENTINEL;
-  static bool constexpr exception_on_duplicates = false;
 
   static std::array constexpr values = {
       value_type{key_type::FIRST, "FIRST"},
@@ -40,11 +40,10 @@ struct DummyEnumEnumMap {
   static_assert(count == 4, "Invalid number of elements in values array");
 };
 
-struct DummyEnumStringViewEnumMap {
+struct DummyEnumStringViewEnumMap : public enum_utils::EnumMapBase {
   using key_type = DummyEnum;
   using value_type = std::pair<DummyEnum, std::string_view>;
   static key_type constexpr sentinel = key_type::SENTINEL;
-  static bool constexpr exception_on_duplicates = false;
 
   static std::array constexpr values = {
       value_type{key_type::FIRST, "FIRST"},
@@ -56,11 +55,10 @@ struct DummyEnumStringViewEnumMap {
   static_assert(count == 4, "Invalid number of elements in values array");
 };
 
-struct DummyEnumWithDuplicatesEnumMap {
+struct DummyEnumWithDuplicatesEnumMap : public enum_utils::EnumMapBase {
   using key_type = DummyEnum;
   using value_type = std::pair<DummyEnum, char const*>;
   static key_type constexpr sentinel = key_type::SENTINEL;
-  static bool constexpr exception_on_duplicates = false;
 
   static std::array constexpr values = {
       value_type{key_type::FIRST, "FIRST"},
@@ -72,7 +70,7 @@ struct DummyEnumWithDuplicatesEnumMap {
   static_assert(count == 4, "Invalid number of elements in values array");
 };
 
-struct ExceptionOnDuplicatesEnumMap {
+struct ExceptionOnDuplicatesEnumMap : public enum_utils::EnumMapBase {
   using key_type = DummyEnum;
   using value_type = std::pair<DummyEnum, char const*>;
   static key_type constexpr sentinel = key_type::SENTINEL;
@@ -87,6 +85,24 @@ struct ExceptionOnDuplicatesEnumMap {
   static std::size_t constexpr count = values.size();
   static_assert(count == 4, "Invalid number of elements in values array");
 };
+
+struct OnDuplicatesEnumMap : public enum_utils::EnumMapBase {
+  using key_type = DummyEnum;
+  using value_type = std::pair<DummyEnum, char const*>;
+  static key_type constexpr sentinel = key_type::SENTINEL;
+
+  static int on_duplicates_called;
+
+  static std::array constexpr values = {
+      value_type{key_type::FIRST, "FIRST"},
+      value_type{key_type::SECOND, "SECOND"},
+      value_type{key_type::SECOND, "SECOND"},
+      value_type{key_type::THIRD, "THIRD"},
+  };  // Omit template arguments to std::array so that they are deduced automatically.
+  static std::size_t constexpr count = values.size();
+  static_assert(count == 4, "Invalid number of elements in values array");
+};
+int OnDuplicatesEnumMap::on_duplicates_called = 0;
 
 template <typename T>
 std::string const& dummy_enum_to_value_type(DummyEnum const val) {
@@ -153,4 +169,22 @@ TEST_CASE("Test EnumMap duplicates") {
 
 TEST_CASE("Test EnumMap duplicates exceptions") {
   REQUIRE_THROWS(enum_utils::EnumMap<ExceptionOnDuplicatesEnumMap>::has_duplicates());
+}
+
+TEST_CASE("Test OnDuplicatesEnumMap") {
+  REQUIRE_FALSE(OnDuplicatesEnumMap::exception_on_duplicates);
+  OnDuplicatesEnumMap::on_duplicates = []() { ++OnDuplicatesEnumMap::on_duplicates_called; };
+
+  // Dummy check that the function wasn't called yet.
+  REQUIRE((OnDuplicatesEnumMap::on_duplicates_called == 0));
+
+  // Call has_duplicates() to check that the function is called.
+  REQUIRE(enum_utils::EnumMap<OnDuplicatesEnumMap>::has_duplicates());
+  REQUIRE((OnDuplicatesEnumMap::on_duplicates_called == 1));
+
+  // Call has_duplicates() again to check that the function is not called again.
+  REQUIRE(enum_utils::EnumMap<OnDuplicatesEnumMap>::has_duplicates());
+  REQUIRE((OnDuplicatesEnumMap::on_duplicates_called == 1));
+  REQUIRE(enum_utils::EnumMap<OnDuplicatesEnumMap>::size());
+  REQUIRE((OnDuplicatesEnumMap::on_duplicates_called == 1));
 }
